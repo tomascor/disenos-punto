@@ -1,7 +1,9 @@
 // ============ CONFIGURACIÓN ============
 const SPREADSHEET_ID = '18M9CQc65PNk5cLv1GsxK6bRbttTgYCN0gflgGdLxTUQ';
 const API_KEY = 'AIzaSyBlfWa3Y7OufGi9zm91ax4CTkbjRqs72pw';
+const SHEET_NAME = 'Hoja%201';
 
+// ============ VARIABLES GLOBALES ============
 let allData = [];
 let currentPage = 0;
 const PAGE_SIZE = 50;
@@ -11,20 +13,50 @@ let filteredData = [];
 
 // ============ CARGAR DATOS ============
 async function loadData() {
+    const gallery = document.getElementById('gallery');
+    gallery.innerHTML = '<p style="text-align:center;">🔄 Cargando datos...</p>';
+    
     try {
-        const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/Hoja1?key=${API_KEY}`;
-        const response = await fetch(url);
-        const data = await response.json();
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
+        console.log('📡 URL:', url);
         
-        if (!data.values || data.values.length === 0) {
-            document.getElementById('gallery').innerHTML = '<p style="text-align:center;color:var(--text-secondary);">No se encontraron datos</p>';
+        const response = await fetch(url);
+        console.log('📡 Status:', response.status);
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('❌ Error:', errorText);
+            
+            let mensaje = `❌ Error ${response.status}`;
+            if (response.status === 403) {
+                mensaje = `
+                    ❌ Error 403: Permiso denegado<br><br>
+                    <strong>📌 Solución:</strong><br>
+                    1. Abre tu Google Sheets "Diseños Punto"<br>
+                    2. Haz clic en "Compartir"<br>
+                    3. Añade este email como editor:<br>
+                    <code style="background:#f0f0f0;padding:4px 8px;border-radius:4px;display:inline-block;margin:8px 0;">
+                        disenos-punto@disenospunto.iam.gserviceaccount.com
+                    </code><br>
+                    4. Acepta y recarga esta página
+                `;
+            }
+            
+            gallery.innerHTML = `<p style="text-align:center;color:red;">${mensaje}</p>`;
             return;
         }
         
-        // Obtener encabezados
-        const headers = data.values[0];
+        const data = await response.json();
+        console.log('📊 Datos recibidos:', data);
         
-        // Procesar datos
+        if (!data.values || data.values.length === 0) {
+            gallery.innerHTML = '<p style="text-align:center;color:var(--text-secondary);">✅ No hay datos en la hoja</p>';
+            return;
+        }
+        
+        const headers = data.values[0];
+        console.log('📋 Encabezados:', headers);
+        
         allData = data.values.slice(1)
             .filter(row => row.length > 1 && row[0] && row[1])
             .map(row => {
@@ -37,18 +69,15 @@ async function loadData() {
         
         console.log(`📊 Cargados ${allData.length} diseños`);
         
-        // Llenar filtros
         populateFilters();
-        
-        // Mostrar resultados
         applyFilters();
         
     } catch (error) {
-        console.error('Error:', error);
-        document.getElementById('gallery').innerHTML = `
+        console.error('❌ Error:', error);
+        gallery.innerHTML = `
             <p style="text-align:center;color:red;">
-                ❌ Error cargando la base de datos.<br>
-                <small>${error.message}</small>
+                ❌ Error: ${error.message}<br>
+                <small>Revisa la consola (F12)</small>
             </p>
         `;
     }
@@ -105,7 +134,6 @@ function applyFilters() {
     const etiqueta = document.getElementById('etiquetaFilter').value;
     
     filteredData = allData.filter(item => {
-        // Búsqueda
         if (search) {
             const searchable = [
                 item.diseñadora,
@@ -117,25 +145,17 @@ function applyFilters() {
             ].join(' ').toLowerCase();
             if (!searchable.includes(search)) return false;
         }
-        
-        // Tipo
         if (tipo) {
             const itemTipo = item.tipo_real || item.tipo_adivinado || 'otro';
             if (itemTipo !== tipo) return false;
         }
-        
-        // Diseñadora
         if (disenadora && item.diseñadora !== disenadora) return false;
-        
-        // Etiqueta
         if (etiqueta) {
             if (!item.etiquetas || !item.etiquetas.includes(etiqueta)) return false;
         }
-        
         return true;
     });
     
-    // Ordenar
     filteredData.sort((a, b) => {
         if (a.diseñadora !== b.diseñadora) {
             return a.diseñadora.localeCompare(b.diseñadora);
@@ -145,7 +165,6 @@ function applyFilters() {
     
     document.getElementById('resultCount').textContent = `${filteredData.length} diseños encontrados`;
     
-    // Resetear y mostrar
     currentPage = 0;
     hasMore = true;
     document.getElementById('gallery').innerHTML = '';
@@ -178,17 +197,14 @@ function loadMore() {
     const batch = filteredData.slice(start, end);
     const gallery = document.getElementById('gallery');
     
-    // Usar requestAnimationFrame para no bloquear UI
     setTimeout(() => {
         batch.forEach(item => {
             const card = createCard(item);
             gallery.appendChild(card);
         });
-        
         currentPage++;
         isLoading = false;
         document.getElementById('loader').style.display = 'none';
-        
         if (end >= filteredData.length) {
             hasMore = false;
         }
@@ -210,8 +226,8 @@ function createCard(item) {
              loading="lazy"
              onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'250\' viewBox=\'0 0 400 250\'%3E%3Crect width=\'400\' height=\'250\' fill=\'%23f0f0f0\'/%3E%3Ctext x=\'200\' y=\'120\' text-anchor=\'middle\' fill=\'%23999\' font-family=\'sans-serif\' font-size=\'16\'%3EImagen no disponible%3C/text%3E%3C/svg%3E'">
         <div class="card-info">
-            <h3>${item.nombre_archivo.replace('.pdf', '')}</h3>
-            <div class="disenadora">✏️ ${item.disenadora}</div>
+            <h3>${item.nombre_archivo ? item.nombre_archivo.replace('.pdf', '') : 'Sin nombre'}</h3>
+            <div class="disenadora">✏️ ${item.diseñadora || 'Sin diseñadora'}</div>
             <span class="tipo">${tipo}</span>
             ${etiquetas.length > 0 ? `
                 <div class="etiquetas">
@@ -241,11 +257,11 @@ function openModal(item) {
                      onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'400\' viewBox=\'0 0 400 400\'%3E%3Crect width=\'400\' height=\'400\' fill=\'%23f0f0f0\'/%3E%3Ctext x=\'200\' y=\'200\' text-anchor=\'middle\' fill=\'%23999\' font-family=\'sans-serif\' font-size=\'16\'%3EImagen no disponible%3C/text%3E%3C/svg%3E'">
             </div>
             <div class="modal-details">
-                <h2>${item.nombre_archivo.replace('.pdf', '')}</h2>
+                <h2>${item.nombre_archivo ? item.nombre_archivo.replace('.pdf', '') : 'Sin nombre'}</h2>
                 
                 <div class="field">
                     <label>Diseñadora</label>
-                    <p><strong>${item.disenadora}</strong></p>
+                    <p><strong>${item.diseñadora || 'Sin diseñadora'}</strong></p>
                 </div>
                 
                 <div class="field">
@@ -285,13 +301,11 @@ function guardarObservacion(ruta_pdf) {
     btn.textContent = '⏳ Guardando...';
     btn.disabled = true;
     
-    // Buscar el item
     const item = allData.find(i => i.ruta_pdf === ruta_pdf);
     if (item) {
         item.observaciones = observaciones;
     }
     
-    // Simular guardado (en realidad deberías usar Google Sheets API con OAuth)
     setTimeout(() => {
         btn.textContent = '✅ ¡Guardado localmente!';
         btn.style.background = '#2ecc71';
@@ -301,9 +315,6 @@ function guardarObservacion(ruta_pdf) {
             btn.disabled = false;
         }, 1500);
     }, 800);
-    
-    // TODO: Implementar guardado real en Sheets (requiere OAuth2)
-    console.log('📝 Observación guardada localmente:', { ruta_pdf, observaciones });
 }
 
 // ============ EVENTOS ============
@@ -322,7 +333,6 @@ window.addEventListener('click', (e) => {
     }
 });
 
-// Scroll infinito
 let scrollTimeout;
 window.addEventListener('scroll', () => {
     clearTimeout(scrollTimeout);
