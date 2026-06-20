@@ -70,6 +70,7 @@ h1 {
     display: flex;
     gap: 0.75rem;
     flex-wrap: wrap;
+    align-items: center;
 }
 
 .filters select {
@@ -85,6 +86,23 @@ h1 {
 .filters select:focus {
     outline: none;
     border-color: var(--primary);
+}
+
+.btn-reset {
+    padding: 0.75rem 1.5rem;
+    background: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-weight: 600;
+    transition: var(--transition);
+    font-size: 0.9rem;
+}
+
+.btn-reset:hover {
+    background: #c0392b;
+    transform: scale(1.02);
 }
 
 #resultCount {
@@ -333,6 +351,7 @@ main {
     .search-section { flex-direction: column; }
     .filters { width: 100%; }
     .filters select { flex: 1; }
+    .btn-reset { width: 100%; }
     .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
     .modal-grid { grid-template-columns: 1fr; }
     .modal-content { padding: 1rem; }

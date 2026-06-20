@@ -317,6 +317,21 @@ function guardarObservacion(ruta_pdf) {
     }, 800);
 }
 
+// ============ LIMPIAR FILTROS ============
+document.getElementById('resetFilters').addEventListener('click', function() {
+    // Limpiar campos de búsqueda y filtros
+    document.getElementById('searchInput').value = '';
+    document.getElementById('tipoFilter').value = '';
+    document.getElementById('disenadoraFilter').value = '';
+    document.getElementById('etiquetaFilter').value = '';
+    
+    // Aplicar filtros (mostrará todos los diseños)
+    applyFilters();
+    
+    // Scroll al inicio de la página
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
 // ============ EVENTOS ============
 document.getElementById('searchInput').addEventListener('input', applyFilters);
 document.getElementById('tipoFilter').addEventListener('change', applyFilters);
