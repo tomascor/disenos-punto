@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧶 Archivo de Patrones</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>🧶 Archivo de Patrones</h1>
+            <div class="search-section">
+                <input type="text" id="searchInput" placeholder="🔍 Buscar por nombre, diseñadora o tipo...">
+                <div class="filters">
+                    <select id="tipoFilter">
+                        <option value="">Todos los tipos</option>
+                    </select>
+                    <select id="disenadoraFilter">
+                        <option value="">Todas las diseñadoras</option>
+                    </select>
+                    <select id="etiquetaFilter">
+                        <option value="">Todas las etiquetas</option>
+                    </select>
+                </div>
+                <div id="resultCount">0 diseños encontrados</div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div id="gallery" class="gallery-grid"></div>
+        <div id="loader" class="loader" style="display: none;">
+            <div class="spinner"></div>
+            <p>Cargando más diseños...</p>
+        </div>
+    </main>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
