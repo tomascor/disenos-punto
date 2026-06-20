@@ -257,8 +257,6 @@ main {
     margin-bottom: 0.25rem;
 }
 
-.modal-details input,
-.modal-details select,
 .modal-details textarea {
     width: 100%;
     padding: 0.5rem;
@@ -266,15 +264,10 @@ main {
     border-radius: var(--radius);
     font-size: 0.95rem;
     transition: var(--transition);
-}
-
-.modal-details textarea {
     min-height: 100px;
     resize: vertical;
 }
 
-.modal-details input:focus,
-.modal-details select:focus,
 .modal-details textarea:focus {
     outline: none;
     border-color: var(--primary);
@@ -296,6 +289,7 @@ main {
     transition: var(--transition);
     text-decoration: none;
     display: inline-block;
+    font-size: 0.9rem;
 }
 
 .btn-primary {
@@ -316,32 +310,13 @@ main {
     background: #c49463;
 }
 
-.btn-accent {
-    background: var(--accent);
-    color: white;
-}
-
-.btn-accent:hover {
-    background: #d65d40;
-}
-
 .btn-pdf {
     background: #e67e22;
     color: white;
-    border: none;
-    border-radius: var(--radius);
-    padding: 0.75rem 1.5rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: var(--transition);
-    text-decoration: none;
-    display: inline-block;
-    font-size: 0.9rem;
 }
 
 .btn-pdf:hover {
     background: #d35400;
-    transform: scale(1.02);
 }
 
 .loader {

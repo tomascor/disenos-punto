@@ -223,8 +223,7 @@ function createCard(item) {
     div.innerHTML = `
         <img src="${imagen || 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'250\' viewBox=\'0 0 400 250\'%3E%3Crect width=\'400\' height=\'250\' fill=\'%23f0f0f0\'/%3E%3Ctext x=\'200\' y=\'120\' text-anchor=\'middle\' fill=\'%23999\' font-family=\'sans-serif\' font-size=\'16\'%3ESin miniatura%3C/text%3E%3C/svg%3E'}" 
              alt="${item.nombre_archivo}" 
-             loading="lazy"
-             onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'250\' viewBox=\'0 0 400 250\'%3E%3Crect width=\'400\' height=\'250\' fill=\'%23f0f0f0\'/%3E%3Ctext x=\'200\' y=\'120\' text-anchor=\'middle\' fill=\'%23999\' font-family=\'sans-serif\' font-size=\'16\'%3EImagen no disponible%3C/text%3E%3C/svg%3E'">
+             loading="lazy">
         <div class="card-info">
             <h3>${item.nombre_archivo ? item.nombre_archivo.replace('.pdf', '') : 'Sin nombre'}</h3>
             <div class="disenadora">✏️ ${item.diseñadora || 'Sin diseñadora'}</div>
@@ -253,8 +252,7 @@ function openModal(item) {
         <div class="modal-grid">
             <div class="modal-image">
                 <img src="${imagen || 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'400\' viewBox=\'0 0 400 400\'%3E%3Crect width=\'400\' height=\'400\' fill=\'%23f0f0f0\'/%3E%3Ctext x=\'200\' y=\'200\' text-anchor=\'middle\' fill=\'%23999\' font-family=\'sans-serif\' font-size=\'16\'%3ESin imagen%3C/text%3E%3C/svg%3E'}" 
-                     alt="${item.nombre_archivo}"
-                     onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'400\' viewBox=\'0 0 400 400\'%3E%3Crect width=\'400\' height=\'400\' fill=\'%23f0f0f0\'/%3E%3Ctext x=\'200\' y=\'200\' text-anchor=\'middle\' fill=\'%23999\' font-family=\'sans-serif\' font-size=\'16\'%3EImagen no disponible%3C/text%3E%3C/svg%3E'">
+                     alt="${item.nombre_archivo}">
             </div>
             <div class="modal-details">
                 <h2>${item.nombre_archivo ? item.nombre_archivo.replace('.pdf', '') : 'Sin nombre'}</h2>
@@ -295,21 +293,13 @@ function openModal(item) {
 
 // ============ ABRIR PDF ============
 function abrirPDF(ruta, nombre) {
-    console.log(`📄 Abriendo PDF: ${nombre}`);
-    console.log(`📄 Ruta: ${ruta}`);
-    
     if (!ruta || ruta === '' || ruta === 'undefined') {
         alert('❌ No hay ruta disponible para este PDF');
         return;
     }
     
-    // Si la ruta es local (disco duro)
     if (ruta.match(/^[A-Z]:\\/i) || ruta.match(/^[A-Z]:\//i)) {
-        const partes = ruta.split('/');
-        const disenadora = partes[partes.length - 2] || 'Desconocida';
-        const archivo = partes[partes.length - 1] || nombre;
-        
-        alert(`📄 Ruta del PDF:\n\n${ruta}\n\n📁 Diseñadora: ${disenadora}\n📄 Archivo: ${archivo}\n\n💡 Copia esta ruta y pégala en el Explorador de Windows para abrir el archivo.`);
+        alert(`📄 Ruta del PDF:\n\n${ruta}\n\n💡 Copia esta ruta y pégala en el Explorador de Windows.`);
         return;
     }
     
@@ -331,7 +321,7 @@ function guardarObservacion(ruta_pdf) {
     }
     
     setTimeout(() => {
-        btn.textContent = '✅ ¡Guardado localmente!';
+        btn.textContent = '✅ Guardado localmente';
         btn.style.background = '#2ecc71';
         setTimeout(() => {
             btn.textContent = originalText;
@@ -343,14 +333,12 @@ function guardarObservacion(ruta_pdf) {
 
 // ============ LIMPIAR FILTROS ============
 function limpiarFiltros() {
-    console.log('🔄 Limpiando filtros...');
     document.getElementById('searchInput').value = '';
     document.getElementById('tipoFilter').value = '';
     document.getElementById('disenadoraFilter').value = '';
     document.getElementById('etiquetaFilter').value = '';
     applyFilters();
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    console.log('✅ Filtros limpiados');
 }
 
 // ============ EVENTOS ============
@@ -369,20 +357,7 @@ window.addEventListener('click', (e) => {
     }
 });
 
-document.addEventListener('DOMContentLoaded', function() {
-    const resetBtn = document.getElementById('resetFilters');
-    if (resetBtn) {
-        resetBtn.addEventListener('click', limpiarFiltros);
-        console.log('✅ Botón de limpiar vinculado');
-    }
-});
-
-if (document.readyState === 'complete' || document.readyState === 'interactive') {
-    const resetBtn = document.getElementById('resetFilters');
-    if (resetBtn) {
-        resetBtn.addEventListener('click', limpiarFiltros);
-    }
-}
+document.getElementById('resetFilters').addEventListener('click', limpiarFiltros);
 
 let scrollTimeout;
 window.addEventListener('scroll', () => {
