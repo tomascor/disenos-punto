@@ -282,6 +282,7 @@ function openModal(item) {
                 </div>
                 
                 <div class="modal-actions">
+                    <button onclick="abrirPDF('${item.ruta_pdf}', '${item.nombre_archivo}')" class="btn btn-pdf">📄 Ver PDF completo</button>
                     ${item.miniatura_url ? `<a href="${item.miniatura_url}" target="_blank" class="btn btn-secondary">🖼️ Ver imagen</a>` : ''}
                     <button onclick="guardarObservacion('${item.ruta_pdf}')" class="btn btn-primary">💾 Guardar observación</button>
                 </div>
@@ -290,6 +291,39 @@ function openModal(item) {
     `;
     
     modal.style.display = 'flex';
+}
+
+// ============ ABRIR PDF ============
+function abrirPDF(ruta, nombre) {
+    console.log(`📄 Abriendo PDF: ${nombre}`);
+    console.log(`📄 Ruta: ${ruta}`);
+    
+    if (!ruta || ruta === '' || ruta === 'undefined') {
+        alert('❌ No hay ruta disponible para este PDF');
+        return;
+    }
+    
+    // Decodificar la ruta
+    const pdfUrl = encodeURI(ruta);
+    
+    // Si la ruta parece ser una ruta local (empieza con C:/, D:/, etc.)
+    // No se puede abrir desde el navegador
+    if (ruta.match(/^[A-Z]:\\/i)) {
+        alert('📌 Este PDF está en tu disco local.\n\n' +
+              'Para abrirlo desde la web necesitas:\n' +
+              '1. Subir los PDFs a un servidor (Google Drive, Mega, etc.)\n' +
+              '2. O usar un servicio como Google Drive para compartir los archivos');
+        console.log('ℹ️ Ruta local detectada, no se puede abrir desde el navegador');
+        return;
+    }
+    
+    // Abrir en nueva pestaña
+    try {
+        window.open(pdfUrl, '_blank');
+    } catch (e) {
+        console.error('Error al abrir PDF:', e);
+        alert('No se pudo abrir el PDF. Verifica la ruta.');
+    }
 }
 
 // ============ GUARDAR OBSERVACIONES ============
@@ -317,6 +351,18 @@ function guardarObservacion(ruta_pdf) {
     }, 800);
 }
 
+// ============ LIMPIAR FILTROS ============
+function limpiarFiltros() {
+    console.log('🔄 Limpiando filtros...');
+    document.getElementById('searchInput').value = '';
+    document.getElementById('tipoFilter').value = '';
+    document.getElementById('disenadoraFilter').value = '';
+    document.getElementById('etiquetaFilter').value = '';
+    applyFilters();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    console.log('✅ Filtros limpiados');
+}
+
 // ============ EVENTOS ============
 document.getElementById('searchInput').addEventListener('input', applyFilters);
 document.getElementById('tipoFilter').addEventListener('change', applyFilters);
@@ -333,31 +379,15 @@ window.addEventListener('click', (e) => {
     }
 });
 
-// ============ BOTÓN LIMPIAR FILTROS ============
-// Usamos una función separada y la asignamos directamente
-function limpiarFiltros() {
-    console.log('🔄 Limpiando filtros...');
-    document.getElementById('searchInput').value = '';
-    document.getElementById('tipoFilter').value = '';
-    document.getElementById('disenadoraFilter').value = '';
-    document.getElementById('etiquetaFilter').value = '';
-    applyFilters();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    console.log('✅ Filtros limpiados');
-}
-
-// Asignar el evento después de que el DOM esté listo
+// Botón limpiar filtros
 document.addEventListener('DOMContentLoaded', function() {
     const resetBtn = document.getElementById('resetFilters');
     if (resetBtn) {
         resetBtn.addEventListener('click', limpiarFiltros);
         console.log('✅ Botón de limpiar vinculado');
-    } else {
-        console.error('❌ No se encontró el botón de limpiar');
     }
 });
 
-// También lo asignamos directamente por si el DOM ya está cargado
 if (document.readyState === 'complete' || document.readyState === 'interactive') {
     const resetBtn = document.getElementById('resetFilters');
     if (resetBtn) {

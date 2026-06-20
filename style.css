@@ -356,3 +356,22 @@ main {
     .modal-grid { grid-template-columns: 1fr; }
     .modal-content { padding: 1rem; }
 }
+
+.btn-pdf {
+    background: #e67e22;
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    text-decoration: none;
+    display: inline-block;
+    font-size: 0.9rem;
+}
+
+.btn-pdf:hover {
+    background: #d35400;
+    transform: scale(1.02);
+}
