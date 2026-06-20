@@ -317,21 +317,6 @@ function guardarObservacion(ruta_pdf) {
     }, 800);
 }
 
-// ============ LIMPIAR FILTROS ============
-document.getElementById('resetFilters').addEventListener('click', function() {
-    // Limpiar campos de búsqueda y filtros
-    document.getElementById('searchInput').value = '';
-    document.getElementById('tipoFilter').value = '';
-    document.getElementById('disenadoraFilter').value = '';
-    document.getElementById('etiquetaFilter').value = '';
-    
-    // Aplicar filtros (mostrará todos los diseños)
-    applyFilters();
-    
-    // Scroll al inicio de la página
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-});
-
 // ============ EVENTOS ============
 document.getElementById('searchInput').addEventListener('input', applyFilters);
 document.getElementById('tipoFilter').addEventListener('change', applyFilters);
@@ -347,6 +332,38 @@ window.addEventListener('click', (e) => {
         document.getElementById('modal').style.display = 'none';
     }
 });
+
+// ============ BOTÓN LIMPIAR FILTROS ============
+// Usamos una función separada y la asignamos directamente
+function limpiarFiltros() {
+    console.log('🔄 Limpiando filtros...');
+    document.getElementById('searchInput').value = '';
+    document.getElementById('tipoFilter').value = '';
+    document.getElementById('disenadoraFilter').value = '';
+    document.getElementById('etiquetaFilter').value = '';
+    applyFilters();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    console.log('✅ Filtros limpiados');
+}
+
+// Asignar el evento después de que el DOM esté listo
+document.addEventListener('DOMContentLoaded', function() {
+    const resetBtn = document.getElementById('resetFilters');
+    if (resetBtn) {
+        resetBtn.addEventListener('click', limpiarFiltros);
+        console.log('✅ Botón de limpiar vinculado');
+    } else {
+        console.error('❌ No se encontró el botón de limpiar');
+    }
+});
+
+// También lo asignamos directamente por si el DOM ya está cargado
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    const resetBtn = document.getElementById('resetFilters');
+    if (resetBtn) {
+        resetBtn.addEventListener('click', limpiarFiltros);
+    }
+}
 
 let scrollTimeout;
 window.addEventListener('scroll', () => {
