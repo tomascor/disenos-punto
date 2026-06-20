@@ -303,7 +303,7 @@ function abrirPDF(ruta, nombre) {
         return;
     }
     
-    // Si la ruta es local
+    // Si la ruta es local (disco duro)
     if (ruta.match(/^[A-Z]:\\/i) || ruta.match(/^[A-Z]:\//i)) {
         const partes = ruta.split('/');
         const disenadora = partes[partes.length - 2] || 'Desconocida';
