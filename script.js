@@ -303,27 +303,17 @@ function abrirPDF(ruta, nombre) {
         return;
     }
     
-    // Decodificar la ruta
-    const pdfUrl = encodeURI(ruta);
-    
-    // Si la ruta parece ser una ruta local (empieza con C:/, D:/, etc.)
-    // No se puede abrir desde el navegador
-    if (ruta.match(/^[A-Z]:\\/i)) {
-        alert('📌 Este PDF está en tu disco local.\n\n' +
-              'Para abrirlo desde la web necesitas:\n' +
-              '1. Subir los PDFs a un servidor (Google Drive, Mega, etc.)\n' +
-              '2. O usar un servicio como Google Drive para compartir los archivos');
-        console.log('ℹ️ Ruta local detectada, no se puede abrir desde el navegador');
+    // Si la ruta es local
+    if (ruta.match(/^[A-Z]:\\/i) || ruta.match(/^[A-Z]:\//i)) {
+        const partes = ruta.split('/');
+        const disenadora = partes[partes.length - 2] || 'Desconocida';
+        const archivo = partes[partes.length - 1] || nombre;
+        
+        alert(`📄 Ruta del PDF:\n\n${ruta}\n\n📁 Diseñadora: ${disenadora}\n📄 Archivo: ${archivo}\n\n💡 Copia esta ruta y pégala en el Explorador de Windows para abrir el archivo.`);
         return;
     }
     
-    // Abrir en nueva pestaña
-    try {
-        window.open(pdfUrl, '_blank');
-    } catch (e) {
-        console.error('Error al abrir PDF:', e);
-        alert('No se pudo abrir el PDF. Verifica la ruta.');
-    }
+    window.open(ruta, '_blank');
 }
 
 // ============ GUARDAR OBSERVACIONES ============
@@ -379,7 +369,6 @@ window.addEventListener('click', (e) => {
     }
 });
 
-// Botón limpiar filtros
 document.addEventListener('DOMContentLoaded', function() {
     const resetBtn = document.getElementById('resetFilters');
     if (resetBtn) {
